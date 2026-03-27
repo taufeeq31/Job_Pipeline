@@ -1,7 +1,7 @@
 import JobTrackerApp from './components/JobTrackerApp';
 
 export const metadata = {
-    title: 'Tracker Board',
+    title: 'Hired Trail',
     description:
         'Manage your applications with a clean Kanban board and keep every role, stage, and outcome organized.',
     alternates: {
