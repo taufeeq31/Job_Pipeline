@@ -1,8 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import useLocalStorageState from '../hooks/useLocalStorageState';
+import ResumeHeader from '../components/resumes/ResumeHeader';
+import ResumeFormSection from '../components/resumes/ResumeFormSection';
+import ResumeInsightsSection from '../components/resumes/ResumeInsightsSection';
+import ResumeListSection from '../components/resumes/ResumeListSection';
 
 function getTodayDate() {
     return new Date().toISOString().slice(0, 10);
@@ -273,366 +276,39 @@ export default function ResumesPage() {
     return (
         <main className="mx-auto flex w-full max-w-360 flex-1 flex-col px-4 py-8 sm:px-6 lg:px-10">
             <section className="rounded-3xl border border-white/60 bg-white/78 p-5 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-7">
-                <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700/80">
-                            Resume Library
-                        </p>
-                        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-                            Resume Versions Tracker
-                        </h1>
-                        <p className="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
-                            Link resumes to each application and compare outcomes using conversion
-                            metrics.
-                        </p>
-                        <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                            <span className="rounded-full border border-slate-200 bg-white/90 px-2.5 py-1 font-medium text-slate-700">
-                                Total: {resumes.length}
-                            </span>
-                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
-                                Active: {activeCount}
-                            </span>
-                            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 font-medium text-amber-700">
-                                Archived: {archivedCount}
-                            </span>
-                            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-1 font-medium text-cyan-700">
-                                Linked Apps: {overallStats.applications}
-                            </span>
-                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
-                                Selected: {overallStats.selections}
-                            </span>
-                            <span className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 font-medium text-rose-700">
-                                Rejected: {overallStats.rejections}
-                            </span>
-                        </div>
-                    </div>
+                <ResumeHeader
+                    resumesCount={resumes.length}
+                    activeCount={activeCount}
+                    archivedCount={archivedCount}
+                    overallStats={overallStats}
+                />
 
-                    <Link
-                        href="/"
-                        className="inline-flex items-center justify-center rounded-xl border border-slate-300/90 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-                    >
-                        Back to Tracker
-                    </Link>
-                </div>
+                <ResumeFormSection
+                    editingResumeId={editingResumeId}
+                    shouldShowForm={shouldShowForm}
+                    openCreateForm={openCreateForm}
+                    handleSubmit={handleSubmit}
+                    formValues={formValues}
+                    updateField={updateField}
+                    resumeTypes={RESUME_TYPES}
+                    resetForm={resetForm}
+                />
 
-                <section className="mt-5 rounded-2xl border border-slate-200/90 bg-white/90 p-4 shadow-sm shadow-slate-900/5 sm:p-5">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h2 className="text-base font-semibold text-slate-900">
-                            {editingResumeId ? 'Edit Resume Version' : 'Add Resume Version'}
-                        </h2>
+                <ResumeInsightsSection
+                    overallStats={overallStats}
+                    bestPerformingResume={bestPerformingResume}
+                    analyticsByResumeId={analyticsByResumeId}
+                    formatRate={formatRate}
+                />
 
-                        {!shouldShowForm ? (
-                            <button
-                                type="button"
-                                onClick={openCreateForm}
-                                className="rounded-lg bg-slate-900 px-3.5 py-2 text-sm font-medium text-white shadow-sm shadow-slate-900/10 transition hover:bg-slate-800"
-                            >
-                                + Add Resume
-                            </button>
-                        ) : null}
-                    </div>
-
-                    {shouldShowForm ? (
-                        <form className="mt-4 grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit}>
-                            <label className="flex flex-col gap-1.5">
-                                <span className="text-xs font-medium text-slate-600">
-                                    Resume Name
-                                </span>
-                                <input
-                                    required
-                                    name="title"
-                                    value={formValues.title}
-                                    onChange={updateField}
-                                    placeholder="Frontend Resume v3"
-                                    className="rounded-lg border border-slate-300/90 bg-white/95 px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500 transition focus:ring-2"
-                                />
-                            </label>
-
-                            <label className="flex flex-col gap-1.5">
-                                <span className="text-xs font-medium text-slate-600">Type</span>
-                                <select
-                                    name="type"
-                                    value={formValues.type}
-                                    onChange={updateField}
-                                    className="rounded-lg border border-slate-300/90 bg-white/95 px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500 transition focus:ring-2"
-                                >
-                                    {RESUME_TYPES.map((type) => (
-                                        <option key={type} value={type}>
-                                            {type}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-
-                            <label className="sm:col-span-2 flex flex-col gap-1.5">
-                                <span className="text-xs font-medium text-slate-600">
-                                    Target Role
-                                </span>
-                                <input
-                                    name="targetRole"
-                                    value={formValues.targetRole}
-                                    onChange={updateField}
-                                    placeholder="Frontend Engineer, Product Engineer"
-                                    className="rounded-lg border border-slate-300/90 bg-white/95 px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500 transition focus:ring-2"
-                                />
-                            </label>
-
-                            <label className="sm:col-span-2 flex flex-col gap-1.5">
-                                <span className="text-xs font-medium text-slate-600">
-                                    Resume Link
-                                </span>
-                                <input
-                                    type="url"
-                                    name="fileLink"
-                                    value={formValues.fileLink}
-                                    onChange={updateField}
-                                    placeholder="https://drive.google.com/..."
-                                    className="rounded-lg border border-slate-300/90 bg-white/95 px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500 transition focus:ring-2"
-                                />
-                            </label>
-
-                            <label className="sm:col-span-2 flex flex-col gap-1.5">
-                                <span className="text-xs font-medium text-slate-600">Notes</span>
-                                <textarea
-                                    rows={2}
-                                    name="notes"
-                                    value={formValues.notes}
-                                    onChange={updateField}
-                                    placeholder="Focuses on React + performance projects"
-                                    className="rounded-lg border border-slate-300/90 bg-white/95 px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500 transition focus:ring-2"
-                                />
-                            </label>
-
-                            <div className="sm:col-span-2 mt-1 flex flex-wrap items-center justify-end gap-2">
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="rounded-lg border border-slate-300/90 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-                                >
-                                    {editingResumeId ? 'Cancel Edit' : 'Close'}
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-slate-900/10 transition hover:bg-slate-800"
-                                >
-                                    {editingResumeId ? 'Save Resume' : 'Add Resume'}
-                                </button>
-                            </div>
-                        </form>
-                    ) : (
-                        <p className="mt-3 text-sm text-slate-600">
-                            Form is closed to keep this page focused. Click Add Resume when you need
-                            it.
-                        </p>
-                    )}
-                </section>
-
-                <section className="mt-5 rounded-2xl border border-cyan-200/80 bg-cyan-50/45 p-4 sm:p-5">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700/80">
-                                Performance Insights
-                            </p>
-                            <h2 className="mt-1 text-base font-semibold text-slate-900">
-                                Resume Outcomes Snapshot
-                            </h2>
-                        </div>
-                        <span className="rounded-full border border-cyan-200 bg-white/80 px-2.5 py-1 text-xs font-medium text-cyan-700">
-                            {overallStats.applications} tracked applications
-                        </span>
-                    </div>
-
-                    {bestPerformingResume ? (
-                        <p className="mt-3 text-sm text-slate-700">
-                            Best performer:{' '}
-                            <span className="font-semibold text-slate-900">
-                                {bestPerformingResume.title}
-                            </span>{' '}
-                            with{' '}
-                            <span className="font-semibold text-cyan-800">
-                                {formatRate(
-                                    analyticsByResumeId[bestPerformingResume.id]?.winRate || 0
-                                )}
-                            </span>{' '}
-                            win rate after final decisions.
-                        </p>
-                    ) : (
-                        <p className="mt-3 text-sm text-slate-600">
-                            Start linking resumes in your applications to unlock conversion
-                            insights.
-                        </p>
-                    )}
-
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                        <article className="rounded-xl border border-slate-200/90 bg-white/90 p-3">
-                            <p className="text-xs text-slate-500">Applications</p>
-                            <p className="mt-1 text-base font-semibold text-slate-900">
-                                {overallStats.applications}
-                            </p>
-                        </article>
-                        <article className="rounded-xl border border-slate-200/90 bg-white/90 p-3">
-                            <p className="text-xs text-slate-500">Selections</p>
-                            <p className="mt-1 text-base font-semibold text-slate-900">
-                                {overallStats.selections}
-                            </p>
-                        </article>
-                        <article className="rounded-xl border border-slate-200/90 bg-white/90 p-3">
-                            <p className="text-xs text-slate-500">Rejections</p>
-                            <p className="mt-1 text-base font-semibold text-slate-900">
-                                {overallStats.rejections}
-                            </p>
-                        </article>
-                        <article className="rounded-xl border border-slate-200/90 bg-white/90 p-3">
-                            <p className="text-xs text-slate-500">Win Rate</p>
-                            <p className="mt-1 text-base font-semibold text-slate-900">
-                                {formatRate(
-                                    overallStats.decisions > 0
-                                        ? (overallStats.selections / overallStats.decisions) * 100
-                                        : 0
-                                )}
-                            </p>
-                        </article>
-                    </div>
-                </section>
-
-                <section className="mt-5">
-                    {!isResumesLoaded ? (
-                        <p className="text-sm text-slate-600">Loading resume versions...</p>
-                    ) : sortedResumes.length === 0 ? (
-                        <div className="rounded-2xl border border-dashed border-slate-300/90 bg-white/80 p-4 sm:p-5">
-                            <p className="text-sm font-medium text-slate-800">
-                                No resume versions yet.
-                            </p>
-                            <p className="mt-1 text-sm text-slate-600">
-                                Add your first resume type to start tracking usage across
-                                applications.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                            {sortedResumes.map((resume) => (
-                                <article
-                                    key={resume.id}
-                                    className="rounded-2xl border border-slate-200/90 bg-white/90 p-4 shadow-sm shadow-slate-900/5"
-                                >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <div>
-                                            <h3 className="text-sm font-semibold text-slate-900">
-                                                {resume.title}
-                                            </h3>
-                                            <p className="mt-1 text-xs text-slate-500">
-                                                {resume.targetRole || 'No target role set'}
-                                            </p>
-                                        </div>
-                                        <span
-                                            className={`rounded-full px-2 py-1 text-[11px] font-medium ${
-                                                resume.status === 'archived'
-                                                    ? 'bg-slate-200 text-slate-600'
-                                                    : 'bg-emerald-100 text-emerald-700'
-                                            }`}
-                                        >
-                                            {resume.status === 'archived' ? 'Archived' : 'Active'}
-                                        </span>
-                                    </div>
-
-                                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                                        <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 px-2.5 py-2">
-                                            <p className="text-slate-500">Applications</p>
-                                            <p className="mt-1 font-semibold text-slate-800">
-                                                {analyticsByResumeId[resume.id]?.applications || 0}
-                                            </p>
-                                        </div>
-                                        <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 px-2.5 py-2">
-                                            <p className="text-slate-500">Interviews</p>
-                                            <p className="mt-1 font-semibold text-slate-800">
-                                                {analyticsByResumeId[resume.id]?.interviews || 0}
-                                            </p>
-                                        </div>
-                                        <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 px-2.5 py-2">
-                                            <p className="text-slate-500">Selected</p>
-                                            <p className="mt-1 font-semibold text-slate-800">
-                                                {analyticsByResumeId[resume.id]?.selections || 0}
-                                            </p>
-                                        </div>
-                                        <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 px-2.5 py-2">
-                                            <p className="text-slate-500">Rejected</p>
-                                            <p className="mt-1 font-semibold text-slate-800">
-                                                {analyticsByResumeId[resume.id]?.rejections || 0}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-3 space-y-1.5 text-xs text-slate-600">
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Type:
-                                            </span>{' '}
-                                            {resume.type}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Updated:
-                                            </span>{' '}
-                                            {resume.updatedAt || 'Not set'}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Last manually marked use:
-                                            </span>{' '}
-                                            {resume.lastUsedAt || 'Not used yet'}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Used count:
-                                            </span>{' '}
-                                            {resume.usedCount || 0}
-                                        </p>
-                                    </div>
-
-                                    {resume.notes ? (
-                                        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                                            {resume.notes}
-                                        </p>
-                                    ) : null}
-
-                                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                                        {resume.fileLink ? (
-                                            <a
-                                                href={resume.fileLink}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="rounded-lg border border-slate-300/90 px-2.5 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
-                                            >
-                                                Open Resume
-                                            </a>
-                                        ) : null}
-                                        <button
-                                            type="button"
-                                            onClick={() => handleEdit(resume.id)}
-                                            className="rounded-lg border border-slate-300/90 px-2.5 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleArchive(resume.id)}
-                                            className="rounded-lg border border-amber-200/90 bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-700 transition hover:bg-amber-100"
-                                        >
-                                            {resume.status === 'archived' ? 'Unarchive' : 'Archive'}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDelete(resume.id)}
-                                            className="rounded-lg border border-rose-200/90 px-2.5 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-50"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    )}
-                </section>
+                <ResumeListSection
+                    isResumesLoaded={isResumesLoaded}
+                    sortedResumes={sortedResumes}
+                    analyticsByResumeId={analyticsByResumeId}
+                    onEdit={handleEdit}
+                    onToggleArchive={toggleArchive}
+                    onDelete={handleDelete}
+                />
             </section>
         </main>
     );

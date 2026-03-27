@@ -75,11 +75,11 @@ function cardOutcomeClasses(job) {
     }
 
     if (job.result === 'Selected') {
-        return 'border-cyan-700/25 bg-cyan-700/5';
+        return 'border-emerald-600/35 bg-emerald-600/10';
     }
 
     if (job.result === 'Rejected') {
-        return 'border-slate-900/15 bg-slate-900/5';
+        return 'border-rose-600/35 bg-rose-600/10';
     }
 
     return 'border-slate-900/10 bg-white/95';

@@ -98,7 +98,7 @@ export default function ApplicationForm({
         'rounded-md border border-slate-900/20 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-700/50 focus:ring-2 focus:ring-cyan-700/20';
 
     return (
-        <section className="mt-0 rounded-xl border border-slate-900/10 bg-white p-5 shadow-sm shadow-slate-900/5 sm:p-6">
+        <section className="mt-0 w-full overflow-x-hidden rounded-xl border border-slate-900/10 bg-white p-5 shadow-sm shadow-slate-900/5 sm:p-6">
             <h2 className="text-lg font-semibold tracking-tight text-slate-900">
                 {mode === 'edit' ? 'Edit Application' : 'Add New Application'}
             </h2>
@@ -330,7 +330,7 @@ export default function ApplicationForm({
                                         }}
                                         className={`rounded-md border px-3.5 py-2 text-sm font-medium transition duration-200 ${
                                             formValues.result === 'Selected'
-                                                ? 'border-cyan-700/40 bg-white text-cyan-700'
+                                                ? 'border-emerald-600/45 bg-emerald-50 text-emerald-700'
                                                 : 'border-slate-900/20 bg-white text-slate-700 hover:bg-slate-900/5'
                                         }`}
                                     >
@@ -347,7 +347,7 @@ export default function ApplicationForm({
                                         }}
                                         className={`rounded-md border px-3.5 py-2 text-sm font-medium transition duration-200 ${
                                             formValues.result === 'Rejected'
-                                                ? 'border-slate-900/35 bg-white text-slate-800'
+                                                ? 'border-rose-600/45 bg-rose-50 text-rose-700'
                                                 : 'border-slate-900/20 bg-white text-slate-700 hover:bg-slate-900/5'
                                         }`}
                                     >

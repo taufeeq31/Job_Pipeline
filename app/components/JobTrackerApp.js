@@ -361,7 +361,8 @@ export default function JobTrackerApp() {
                             onClick={openCreateForm}
                             className="inline-flex items-center gap-2 rounded-md bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-900/10 transition duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-cyan-700/90 active:translate-y-0"
                         >
-                            <Plus size={16} aria-hidden="true" />New Application
+                            <Plus size={16} aria-hidden="true" />
+                            New Application
                         </button>
                     </div>
                 </div>
@@ -466,7 +467,7 @@ export default function JobTrackerApp() {
 
             {isFormOpen ? (
                 <div className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-900/35 p-4 backdrop-blur-sm sm:items-center">
-                    <div className="w-full max-w-4xl rounded-xl border border-slate-900/15 bg-white/70 p-2 shadow-xl shadow-slate-900/10">
+                    <div className="max-h-[calc(100vh-2rem)] w-full max-w-4xl overflow-y-auto rounded-xl border border-slate-900/15 bg-white/70 p-2 shadow-xl shadow-slate-900/10">
                         <ApplicationForm
                             key={editingJobId || 'new'}
                             initialValues={editingJob || EMPTY_FORM}
