@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 const NAV_LINKS = [
     { href: '/', label: 'Tracker' },
@@ -33,9 +34,10 @@ export default function AppNavbar() {
                 <div className="flex items-center justify-between gap-3">
                     <Link
                         href="/"
-                        className="rounded-none px-1 py-1 text-xl font-bold tracking-tight text-slate-900 transition-all duration-200 hover:text-cyan-700"
+                        className="rounded-none flex items-center px-2 py-1 text-3xl font-bold tracking-tight text-slate-900 transition-all duration-200 hover:text-cyan-700"
                     >
-                        Job Application Tracker
+                        <Image src="/logo.png" alt="Hired Trail" width={48} height={48} className='mr-2 rounded-xl' />
+                        Hired Trail
                     </Link>
 
                     <nav
